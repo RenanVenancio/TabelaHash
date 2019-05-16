@@ -10,4 +10,4 @@ class Aluno:
 
 
     def __str__(self):
-        return self.matricula
+        return 'MAT: ' + str(self.matricula) + ' - NOME: ' + str(self.nome) + ' - IDADE: ' + str(self.idade)

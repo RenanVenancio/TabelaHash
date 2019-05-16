@@ -3,19 +3,19 @@ from aluno import *
 aluno = Aluno(2321, 'RENAN', 43)
 
 def getEndereco(matricula):
-    return matricula % 11
+    return matricula % 10
 
 tabela = [
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            [],
-            []
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {},
+            {}
         ]
 print(tabela[0])
 
@@ -27,7 +27,7 @@ while sair == 0:
 
     aluno = Aluno(matriculaAluno, nomeAluno, idadeALuno)
 
-    tabela[getEndereco(matriculaAluno)].append(aluno)
+    tabela[getEndereco(matriculaAluno)][matriculaAluno] = aluno
 
     sair = int(input('DESEJA ADICIONAR MAIS ALUNOS? 1=NÃO, 0=SIM: '))
 

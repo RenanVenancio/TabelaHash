@@ -1,80 +1,134 @@
+import os
 from aluno import *
 
-aluno = Aluno(2321, 'RENAN', 43)
+def limpar():
+    os.system('cls' if os.name == 'nt' else 'clear')
 
-tabela = [
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {},
-            {}
-        ]
+#As constantes abaixo apenas controlam a cor da mensagens no console
+RED   = "\033[1;31m"
+BLUE  = "\033[1;34m"
+CYAN  = "\033[1;36m"
+GREEN = "\033[0;32m"
+RESET = "\033[0;0m"
+BOLD    = "\033[;1m"
+REVERSE = "\033[;7m"
+
+
+tabela = [ {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {} ]
 
 def getEndereco(matricula):  #Função que calcula o endreço hash
-    return matricula % 10
-
-def buscar(**kwargs):  #sem parametros, traz todos, ou passe endereço ou matricula
+    return matricula % 11
+'''
+A função abaixo é utilizada para fazer as buscas
+buscar(endereco) Lista os alunos em um determinado endreço
+buscar(matricula) Traz o aluno cadastrado conforme a matricula informada no parametro | Retorna True se encontrar, 
+False se não.
+buscar() Lista toda a tabela hash
+'''
+def buscar(**kwargs):
     if(kwargs.get('endereco')):
         index = kwargs.get('endereco')
         for i in tabela[index]:
             print(tabela[index][i])
 
-    if (kwargs.get('matricula')):
+
+    elif (kwargs.get('matricula')):
         matricula = kwargs.get('matricula')
         endereco = getEndereco(matricula)
-        print(tabela[endereco][matricula])
+        try:    #Tratando erro quando o index não é localizado
+            print(tabela[endereco][matricula])
+        except KeyError:
+            return False
+        return True
+
+    else:
+        for i, endereco in enumerate(tabela):
+            print(BOLD + 'ENDEREÇO: ' + str(i) + RESET)
+            for j in endereco:
+                print('***' + GREEN + str(endereco[j]) + RESET)
+
+def remover(matriculaAluno):
+    try:
+        buscar(matricula=matriculaAluno)
+        tabela[getEndereco(matriculaAluno)].pop(matriculaAluno)
+        print(BLUE + 'Removido!' + RESET)
+    except KeyError:
+        print(RED + 'Matricula não encontrada!' + RESET)
 
 
-    for i, endereco in enumerate(tabela):
-        print('ENDEREÇO: ' + str(i))
-        for j in endereco:
-            print(endereco[j])
+def cadastrar(matricula, nome, idade):
+    aluno = Aluno(matricula, nome, idade)
 
-optMenu = 0
-while optMenu == 0:
-    print('1-> Cadastrar Aluno \n2-> Buscar aluno')
-    optMenu = int(input('DIGITE A OPÇÃO DESEJADA: \n*******************'))
+    if (buscar(matricula=matricula) == False):
+        tabela[getEndereco(matricula)][matricula] = aluno
+        print(BLUE + 'Aluno cadastrado!' + RESET)
 
-    if(optMenu == 1):
-        sairCadastro = 0
-        while sairCadastro == 0:
+    else:
+        print(RED + 'Já existe um aluno com essa matricula cadastrado' + RESET)
+
+
+
+'''
+Menu de opções
+'''
+optMenuBusca = 0
+menuCentral = 1
+while menuCentral == 1:
+
+    print(BLUE + '1-> Cadastrar \n2-> Buscar \n3-> Remover\n4-> Mostrar tabela Hash\n5-> Sair' + RESET)
+    try:
+        optMenuBusca = int(input('DIGITE A OPÇÃO DESEJADA: \n*******************\n'))
+        limpar()
+    except:
+        print(RED + 'Opção Inválida' + RESET)
+        input()
+        limpar()
+
+    if optMenuBusca == 1: # Cadastrar
+        try:
             matriculaAluno = int(input('MATRICULA DO ALUNO: '))
             nomeAluno = input('DIGITE O NOME DO ALUNO: ')
             idadeALuno = int(input('DIGITE A IDADE DO ALUNO: '))
+            cadastrar(matriculaAluno, nomeAluno, idadeALuno)
+            input()
 
-            aluno = Aluno(matriculaAluno, nomeAluno, idadeALuno)
+        except:
+            print(RED + 'Era esperado um número inteiro' + RESET)
+            input()
+        limpar()
 
-            tabela[getEndereco(matriculaAluno)][matriculaAluno] = aluno
+    elif optMenuBusca == 2: # Buscar
+        try:
+            busca = int(input('INFOME A MATRICULA: '))
+            print(RED + 'Não localizado' + RESET) if buscar(matricula=busca) == False else print(
+                BLUE + 'Encontrado' + RESET)
 
-            sairCadastro = int(input('DESEJA ADICIONAR MAIS ALUNOS? 1=NÃO, 0=SIM: '))
-            if(sairCadastro == 1):
-                optMenu = 0
+        except:
+            print(RED + 'Era esperado um número inteiro' + RESET)
 
-    if(optMenu == 2):
-        print('1-> Buscar \n2-> Remover \n3-> Mostrar tabela Hash')
-        sairBusca = int(input('DIGITE A OPÇÃO DESEJADA: \n*******************'))
         optBusca = 0
-        while sairBusca == 0:
-            if optBusca == 1:
-                busca = int(input('INFOME A MATRICULA: '))
-                buscar(busca)
-                optBusca = 0
+        input()
+        limpar()
 
-            elif optBusca == 2:
-                print('Remover')
-                optBusca = 0
+    elif optMenuBusca == 3: # Remover
+        try:
+            matriculaAluno = int(input('Digite a matricula: '))
+            remover(matriculaAluno)
+        except:
+            print(RED + 'Era espardo um valor inteiro!' + RESET)
 
-            elif optBusca == 3:
-                buscar()
-                optBusca = 0
+        optBusca = 0
+        input()
+        limpar()
 
-            if(sairBusca == 1):
-                optMenu = 0
+    elif optMenuBusca == 4: # Mostrar tabela
+        buscar()
+        optBusca = 0
+        input()
+        limpar()
+
+    elif optMenuBusca == 5:
+        menuCentral = 0
 
 
 
